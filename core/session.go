@@ -329,7 +329,7 @@ func (s *Session) InitAPIClient() {
 	case "gitlab":
 		CheckGitlabAPIToken(s.GitlabAccessToken, s)
 		var err error
-		s.Client, err = gitlabClient.NewClient(gitlabClient{}, s.GitlabAccessToken, s.Out)
+		s.Client, err = gitlabClient.NewClient(gitlabClient{}, s)
 		if err != nil {
 			s.Out.Fatal("Error initializing GitLab client: %s", err)
 		}

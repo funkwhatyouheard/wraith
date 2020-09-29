@@ -55,14 +55,18 @@ type gitlabClient struct {
 }
 
 // NewClient creates a gitlab api client instance using a token
-func (c gitlabClient) NewClient(token string, logger *Logger) (gitlabClient, error) {
+func (c gitlabClient) NewClient(sess *Session) (gitlabClient, error) {
 	var err error
-	c.apiClient, err = gitlab.NewClient(token)
+	if len(sess.EnterpriseURL) != 0 && sess.EnterpriseScan {
+		c.apiClient, err = gitlab.NewClient(sess.GitlabAccessToken, gitlab.WithBaseURL(sess.EnterpriseURL))
+	} else {
+		c.apiClient, err = gitlab.NewClient(sess.GitlabAccessToken)
+	}
 	if err != nil {
 		return gitlabClient{}, err
 	}
 	c.apiClient.UserAgent = UserAgent
-	c.logger = logger
+	c.logger = sess.Out
 	return c, nil
 }
 
